@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Advisory Database",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "advisory_db",
+      "Username": "advisory_user",
+      "SSLMode": "prefer",
+      "PassFile": "/pgpass"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: advisory-postgres
+    environment:
+      POSTGRES_DB: advisory_db
+      POSTGRES_USER: advisory_user
+      POSTGRES_PASSWORD: advisory_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persist data between container restarts
+      - postgres_data:/var/lib/postgresql/data
+      # Mount CSV for updates (optional - can update directly in DB)
+      - ./advisory_not_applicable.csv:/app/advisory_not_applicable.csv:ro
+    networks:
+      - advisory-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U advisory_user -d advisory_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Optional: PgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: advisory-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY: 'False'
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      # Auto-register PostgreSQL server
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
+      - ./docker/pgadmin/pgpass:/pgpass:ro
+    networks:
+      - advisory-network
+    depends_on:
+      - postgres
+    profiles:
+      - with-pgadmin
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  advisory-network:
+    driver: bridge

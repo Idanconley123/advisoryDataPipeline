@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "advisory-pipeline"
+version = "0.1.0"
+description = "Echo's CVE Advisory Management System - A PySpark-based data pipeline"
+authors = ["IDAN CONLEY"]
+readme = "README.md"
+packages = [{include = "advisory_pipeline", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+pyspark = "^3.5.5"
+requests = "^2.32.4"
+pandas = "^2.2.3"
+psycopg2-binary = "^2.9.9"
+pyyaml = "^6.0.2"
+dacite = "^1.9.2"
+boto3 = "^1.39.16"
+urllib3 = "^2.6.3"
+pydantic = "^2.11.7"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pylint = "^3.3.6"
+pyright = "^1.1.401"
+ruff = "^0.14.5"
+
+[tool.poetry.scripts]
+advisory-pipeline = "run:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pylint.messages_control]
+max-line-length = 100
+disable = [
+    "missing-docstring",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-locals",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F403", "F401"]
+
+[tool.pyright]
+pythonVersion = "3.12"
